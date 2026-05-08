@@ -1,11 +1,25 @@
 import React, { useState, useEffect } from 'react';
 
-const API_BASE = '/api';
+const mockStats = {
+  totalStudents: 1247,
+  totalFaculty: 86,
+  totalCourses: 142,
+  totalDepartments: 12,
+  pendingFees: 38,
+};
 
-const getHeaders = () => ({
-  'Content-Type': 'application/json',
-  Authorization: `Bearer ${localStorage.getItem('token')}`,
-});
+const mockUsers = [
+  { email: 'alice.williams@university.edu', role: 'STUDENT', isActive: true, profile: { firstName: 'Alice', lastName: 'Williams', department: { name: 'Computer Science' } } },
+  { email: 'bob.davis@university.edu', role: 'STUDENT', isActive: true, profile: { firstName: 'Bob', lastName: 'Davis', department: { name: 'Mathematics' } } },
+  { email: 'john.smith@university.edu', role: 'FACULTY', isActive: true, profile: { firstName: 'John', lastName: 'Smith', department: { name: 'Computer Science' } } },
+  { email: 'sarah.johnson@university.edu', role: 'FACULTY', isActive: true, profile: { firstName: 'Sarah', lastName: 'Johnson', department: { name: 'Physics' } } },
+  { email: 'carol.martinez@university.edu', role: 'STUDENT', isActive: true, profile: { firstName: 'Carol', lastName: 'Martinez', department: { name: 'Engineering' } } },
+  { email: 'david.lee@university.edu', role: 'STUDENT', isActive: false, profile: { firstName: 'David', lastName: 'Lee', department: { name: 'Biology' } } },
+  { email: 'emma.wilson@university.edu', role: 'FACULTY', isActive: true, profile: { firstName: 'Emma', lastName: 'Wilson', department: { name: 'Chemistry' } } },
+  { email: 'frank.brown@university.edu', role: 'STUDENT', isActive: true, profile: { firstName: 'Frank', lastName: 'Brown', department: { name: 'Mathematics' } } },
+  { email: 'grace.taylor@university.edu', role: 'STUDENT', isActive: true, profile: { firstName: 'Grace', lastName: 'Taylor', department: { name: 'Computer Science' } } },
+  { email: 'henry.anderson@university.edu', role: 'ADMIN', isActive: true, profile: { firstName: 'Henry', lastName: 'Anderson', department: { name: 'Administration' } } },
+];
 
 export default function Dashboard() {
   const [stats, setStats] = useState(null);
@@ -13,30 +27,18 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    try {
-      const [statsRes, usersRes] = await Promise.all([
-        fetch(`${API_BASE}/admin/stats`, { headers: getHeaders() }),
-        fetch(`${API_BASE}/admin/users`, { headers: getHeaders() }),
-      ]);
-      const statsData = await statsRes.json();
-      const usersData = await usersRes.json();
-      setStats(statsData.stats);
-      setUsers(usersData.users || []);
-    } catch (error) {
-      console.error('Error:', error);
-    } finally {
+    // Simulate loading
+    setTimeout(() => {
+      setStats(mockStats);
+      setUsers(mockUsers);
       setLoading(false);
-    }
-  };
+    }, 500);
+  }, []);
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
       </div>
     );
   }
@@ -68,7 +70,7 @@ export default function Dashboard() {
       </div>
 
       {/* Recent Users Table */}
-      <div className="card">
+      <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6 backdrop-blur-sm">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-slate-50">Recent Users</h2>
           <span className="text-sm text-slate-400">{users.length} total</span>
@@ -85,11 +87,11 @@ export default function Dashboard() {
               </tr>
             </thead>
             <tbody>
-              {users.slice(0, 10).map((user, i) => (
+              {users.map((user, i) => (
                 <tr key={i} className="border-b border-slate-800 hover:bg-slate-800/50 transition-colors">
                   <td className="py-3 px-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-primary-500/20 flex items-center justify-center text-sm font-medium text-primary-400">
+                      <div className="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-sm font-medium text-indigo-400">
                         {user.profile?.firstName?.[0]}{user.profile?.lastName?.[0]}
                       </div>
                       <span className="text-sm text-slate-200">{user.profile?.firstName} {user.profile?.lastName}</span>

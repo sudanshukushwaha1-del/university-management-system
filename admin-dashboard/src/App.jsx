@@ -4,43 +4,41 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Sidebar from './components/Sidebar';
 
-const API_BASE = '/api';
-
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
-    if (token && userData) {
+    const userData = localStorage.getItem('ums_user');
+    if (userData) {
       setUser(JSON.parse(userData));
     }
     setLoading(false);
   }, []);
 
   const login = async (email, password) => {
-    const res = await fetch(`${API_BASE}/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error);
-    if (data.user.role !== 'ADMIN') throw new Error('Access denied. Admin only.');
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('user', JSON.stringify(data.user));
-    setUser(data.user);
-    return data;
+    // Demo mode - accept any credentials
+    const mockUser = {
+      id: '1',
+      email: email,
+      role: 'ADMIN',
+      profile: {
+        firstName: 'Admin',
+        lastName: 'User',
+        department: { name: 'Administration' }
+      }
+    };
+    localStorage.setItem('ums_user', JSON.stringify(mockUser));
+    setUser(mockUser);
+    return mockUser;
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    localStorage.removeItem('ums_user');
     setUser(null);
   };
 
-  if (loading) return <div className="flex items-center justify-center h-screen"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div></div>;
+  if (loading) return <div className="flex items-center justify-center h-screen bg-slate-950"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div></div>;
 
   return children({ user, login, logout });
 }
@@ -56,7 +54,7 @@ export default function App() {
               user ? (
                 <div className="flex h-screen">
                   <Sidebar user={user} onLogout={logout} />
-                  <main className="flex-1 overflow-auto p-6">
+                  <main className="flex-1 overflow-auto p-6 bg-slate-950">
                     <Dashboard />
                   </main>
                 </div>
