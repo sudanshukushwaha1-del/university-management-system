@@ -1,6 +1,5 @@
 node_modules/
 .env
-dist/
 .expo/
 *.log
 .DS_Store
